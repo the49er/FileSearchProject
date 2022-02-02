@@ -20,14 +20,12 @@ public class RecursiveFileScanner implements FileScanner {
         //1. Беру файл directory, и прохожусь по всем файлам внутри - child
         //2. Если же child - директория, то я вызываю recursiveScan(child, storage)
         //3. Если child - не директория (просто файл) - добавляю его в storage
-
         for (File child: directory.listFiles()) {
-            if (child.isDirectory()){
+            if (child.isDirectory()) {
                 recursiveScan(child, storage);
-            }else {
+            } else {
                 storage.add(child);
             }
-
         }
     }
 }

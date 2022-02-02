@@ -24,17 +24,38 @@ public class FileScannerTest {
         String diskName = scanner.nextLine();
         System.out.println("_______________________________________________________________________________________");
 
+        String pathToDocs = diskName + ":\\Data\\ДОГОВОРА общ\\Договора 2022\\";
+        File isRealdear = new File(diskName + ":\\Data\\ДОГОВОРА общ\\Договора 2022\\");
+
+        if(!isRealdear.exists()) {
+            System.out.println("Неверно указана метка диска");
+            System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
+            scanner.nextLine();
+        }
+
+
+        Collection<File> files = fileScanner.scan(new File(pathToDocs));
+
         System.out.println("Введите дату в формате DD.MM.YYYY и нажмите Enter\r");
         String date = scanner.nextLine();
+        System.out.println("_______________________________________________________________________________________\n");
         int count = 0;
 
-
-        String pathToDocs = diskName + ":\\Data\\ДОГОВОРА общ\\Договора 2022\\";
-        Collection<File> files = fileScanner.scan(new File(pathToDocs));
 
         File dirForInvoices = new File(diskName + ":\\Data\\ДОГОВОРА общ\\_счета на отправку\\"+date+"\\");
         dirForInvoices.mkdir();
         String dest = diskName + ":\\Data\\ДОГОВОРА общ\\_счета на отправку\\"+date+"\\";
+
+//        try {
+//            if(!dirForInvoices.exists()) {
+//                System.out.println((!dirForInvoices.exists()));
+//                System.out.println("Неверно указан метка диска");
+//                System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
+//                scanner.nextLine();
+//            }
+//        }catch (NullPointerException e){
+//            e.printStackTrace();
+//        }
 
         for (File file : files) {
             if ((fileUtils.getFileExtension(file).equals("xls") ||
@@ -54,9 +75,14 @@ public class FileScannerTest {
             }
         }
         if (count > 0) {
-            System.out.println("Количество скопированных файлов: " + count);
+            System.out.println("\nКоличество скопированных файлов: " + count);
             System.out.println("Файлы скопированы в директорию:   " + dest);
-
+            System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
+            scanner.nextLine();
+        }else{
+            System.out.println("Файлов для копирования на дату "+ date +" не найдено");
+            System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
+            scanner.nextLine();
         }
     }
 }
