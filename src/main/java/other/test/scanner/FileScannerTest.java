@@ -17,13 +17,16 @@ public class FileScannerTest {
 
 
         System.out.println("\nСкрипт ищет файлы Excel с расширением *.xls и *.xlsx, в названии которых присутствуют слова: \"Рахунок\"" +
-                " и \"замена\" c выбором на указанную дату.\n");
+                " и \"замена\" c учетом даты создания файла.\n" +
+                "_______________________________________________________________________________________");
 
-        System.out.println("Укажите метку диска, на котором расположены файлы, например C  D или F и нажмите Enter\r");
+        System.out.println("Укажите метку диска, на котором расположены файлы, например C  D или F и нажмите Enter:\r");
         String diskName = scanner.nextLine();
+        System.out.println("_______________________________________________________________________________________");
 
-        System.out.println("Введите дату в формате DD.MM.YYYY и нажмите Enter\n\r");
+        System.out.println("Введите дату в формате DD.MM.YYYY и нажмите Enter\r");
         String date = scanner.nextLine();
+        int count = 0;
 
 
         String pathToDocs = diskName + ":\\Data\\ДОГОВОРА общ\\Договора 2022\\";
@@ -39,16 +42,21 @@ public class FileScannerTest {
                         && fileUtils.isFileContainName(file)) {
 
                 if (fileUtils.getFileCreationTime(file).equals(date)){
-                    System.out.println("Скопирован счет:    " + file.getName());
                     try {
                         Files.copy(file.toPath(), new File(dest + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        //System.out.println("file.toPath() = " + file.toPath());
+                        System.out.println("Скопирован счет:    " + file.getName());
+                        count++;
                     } catch (FileAlreadyExistsException e) {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             }
+        }
+        if (count > 0) {
+            System.out.println("Количество скопированных файлов: " + count);
+            System.out.println("Файлы скопированы в директорию:   " + dest);
+
         }
     }
 }
