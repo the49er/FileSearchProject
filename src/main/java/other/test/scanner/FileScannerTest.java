@@ -17,17 +17,17 @@ public class FileScannerTest {
 
 
         System.out.println("\nСкрипт ищет файлы Excel с расширением *.xls и *.xlsx, в названии которых присутствуют слова: \"Рахунок\"" +
-                " и \"замена\" c учетом даты создания файла.\n" +
+                " или \"замена\" c учетом даты создания файла.\n" +
                 "_______________________________________________________________________________________");
 
-        System.out.println("Укажите метку диска, на котором расположены файлы, например C  D или F и нажмите Enter:\r");
+        System.out.println("Укажите метку диска, на котором расположены файлы, например: C  D или F, нажмите Enter:\r");
         String diskName = scanner.nextLine();
         System.out.println("_______________________________________________________________________________________");
 
         String pathToDocs = diskName + ":\\Data\\ДОГОВОРА общ\\Договора 2022\\";
-        File isRealdear = new File(diskName + ":\\Data\\ДОГОВОРА общ\\Договора 2022\\");
+        File isRealdir = new File(diskName + ":\\Data\\ДОГОВОРА общ\\Договора 2022\\");
 
-        if(!isRealdear.exists()) {
+        if(!isRealdir.exists()) {
             System.out.println("Неверно указана метка диска");
             System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
             scanner.nextLine();
@@ -82,6 +82,8 @@ public class FileScannerTest {
         }else{
             System.out.println("Файлов для копирования на дату "+ date +" не найдено");
             System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
+            dirForInvoices.delete();
+
             scanner.nextLine();
         }
     }
