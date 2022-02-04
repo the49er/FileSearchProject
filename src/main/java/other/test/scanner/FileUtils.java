@@ -3,11 +3,15 @@ package other.test.scanner;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public class FileUtils {
     public String getFileExtension(File file) {
@@ -31,6 +35,10 @@ public class FileUtils {
             // 0  1  2  3  4  5  6  7  8  9
             sbTemp.append(tmpArrCreationTime[i]);
         }
+//        Date creationTime = new Date(attr.creationTime().toMillis());
+//        String res = creationTime.getDate()+"."+(creationTime.getMonth()+1)+"."+(creationTime.getYear()+1900);
+//        System.out.println("res = " + res);
+
         char[] tempArr = sbTemp.toString().toCharArray();
         char tmp1 = tempArr[0];
         tempArr[0] = tempArr[1];
@@ -78,5 +86,25 @@ public class FileUtils {
         }
 
         return isContainName;
+    }
+    
+    public String insertYearFromDate(String str){
+
+        String[] arrStr = str.split("\\.");
+        String result = arrStr[arrStr.length-1];
+        return result;
+    }
+
+    public boolean isValidDate(String str){
+        boolean isValidDate = false;
+
+
+        Pattern validDate =  Pattern.compile("[0-3][0-9]\\.[0-1][0-9]\\.[0-9][0-9][0-9][0-9]");
+        if (validDate.matcher(str).matches()) {
+            isValidDate = true;
+        }
+
+
+        return isValidDate;
     }
 }

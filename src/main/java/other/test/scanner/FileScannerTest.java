@@ -1,5 +1,6 @@
 package other.test.scanner;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -14,20 +15,45 @@ public class FileScannerTest {
         FileUtils fileUtils = new FileUtils();
         Scanner scanner = new Scanner(System.in);
 
-
+        long time = System.currentTimeMillis();
 
         System.out.println("\nСкрипт ищет файлы Excel с расширением *.xls и *.xlsx, в названии которых присутствуют слова: \"Рахунок\"" +
                 " или \"замена\" c учетом даты создания файла.\n" +
                 "_______________________________________________________________________________________");
 
-        System.out.println("Укажите метку диска, на котором расположены файлы, например: C  D или F, нажмите Enter:\r");
+        File[] paths;
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+
+// returns pathnames for files and directory
+        paths = File.listRoots();
+
+// for each pathname in pathname array
+        for (File path : paths) {
+            // prints file and directory paths
+            System.out.println("Drive Name: " + path + "   " + fsv.getSystemTypeDescription(path));
+            //System.out.println("Description: "+fsv.getSystemTypeDescription(path));
+        }
+
+        System.out.println("\nУкажите метку диска, на котором расположены файлы, например: C  D или F, нажмите Enter:\r");
         String diskName = scanner.nextLine();
         System.out.println("_______________________________________________________________________________________");
 
-        String pathToDocs = diskName + ":\\Data\\ДОГОВОРА общ\\Договора 2022\\";
-        File isRealdir = new File(diskName + ":\\Data\\ДОГОВОРА общ\\Договора 2022\\");
+        System.out.println("Введите дату в формате DD.MM.YYYY и нажмите Enter\r");
+        String date = scanner.nextLine();
+        System.out.println("_______________________________________________________________________________________\n");
+        int count = 0;
 
-        if(!isRealdir.exists()) {
+        if(!fileUtils.isValidDate(date)) {
+            System.out.println("Неверно указан формат даты");
+            System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
+            scanner.nextLine();
+
+        }
+
+        String pathToDocs = diskName + ":\\Data\\ДОГОВОРА общ\\Договора "+fileUtils.insertYearFromDate(date)+"\\";
+        File isRealdir = new File(diskName + ":\\Data\\ДОГОВОРА общ\\Договора "+fileUtils.insertYearFromDate(date)+"\\");
+
+        if (!isRealdir.exists()) {
             System.out.println("Неверно указана метка диска");
             System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
             scanner.nextLine();
@@ -36,15 +62,10 @@ public class FileScannerTest {
 
         Collection<File> files = fileScanner.scan(new File(pathToDocs));
 
-        System.out.println("Введите дату в формате DD.MM.YYYY и нажмите Enter\r");
-        String date = scanner.nextLine();
-        System.out.println("_______________________________________________________________________________________\n");
-        int count = 0;
 
-
-        File dirForInvoices = new File(diskName + ":\\Data\\ДОГОВОРА общ\\_счета на отправку\\"+date+"\\");
+        File dirForInvoices = new File(diskName + ":\\Data\\ДОГОВОРА общ\\_счета на отправку\\" + date + "\\");
         dirForInvoices.mkdir();
-        String dest = diskName + ":\\Data\\ДОГОВОРА общ\\_счета на отправку\\"+date+"\\";
+        String dest = diskName + ":\\Data\\ДОГОВОРА общ\\_счета на отправку\\" + date + "\\";
 
 //        try {
 //            if(!dirForInvoices.exists()) {
@@ -60,12 +81,12 @@ public class FileScannerTest {
         for (File file : files) {
             if ((fileUtils.getFileExtension(file).equals("xls") ||
                     fileUtils.getFileExtension(file).equals("xlsx"))
-                        && fileUtils.isFileContainName(file)) {
+                    && fileUtils.isFileContainName(file)) {
 
-                if (fileUtils.getFileCreationTime(file).equals(date)){
+                if (fileUtils.getFileCreationTime(file).equals(date)) {
                     try {
                         Files.copy(file.toPath(), new File(dest + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Скопирован счет:    " + file.getName());
+                        System.out.println("Скопирован файл:    " + file.getName());
                         count++;
                     } catch (FileAlreadyExistsException e) {
                     } catch (IOException e) {
@@ -77,10 +98,13 @@ public class FileScannerTest {
         if (count > 0) {
             System.out.println("\nКоличество скопированных файлов: " + count);
             System.out.println("Файлы скопированы в директорию:   " + dest);
+            System.out.println("Время выполнения поиска, сек: "+(float)(System.currentTimeMillis() - time)/1000+"\n");
             System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
+
             scanner.nextLine();
-        }else{
-            System.out.println("Файлов для копирования на дату "+ date +" не найдено");
+        } else {
+            System.out.println("Файлов для копирования на дату " + date + " не найдено");
+            System.out.println("Время выполнения поиска, сек: "+(float)(System.currentTimeMillis() - time)/1000+"\n");
             System.out.println("\nНажмите клавишу Enter, чтобы выйти.");
             dirForInvoices.delete();
 
